@@ -1,4 +1,8 @@
 # Distribution / packaging
-node_modules
+node_modules/
 
+# Environment variables
+.env
 
+# Exclude router folder
+final_project/router/

@@ -11,9 +11,19 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/', async function (req, res) {
+  try {
+    // 1. Await the promise to get the books object
+    const allBooks = await new Promise((resolve) => resolve(books));
+    
+    // 2. Use JSON.stringify(object, replacer, space)
+    // null = we don't want to filter any properties
+    // 4 = we want 4 spaces of indentation for "pretty-print"
+    res.status(200).send(JSON.stringify(allBooks, null, 4));
+
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching books" });
+  }
 });
 
 // Get book details based on ISBN
