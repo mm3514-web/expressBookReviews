@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Program (Node)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/final_project/index.js",
+      "cwd": "${workspaceFolder}/final_project",
+      "console": "integratedTerminal",
+      "runtimeArgs": []
+    },
+    {
+      "name": "Launch with nodemon",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "nodemon",
+      "program": "${workspaceFolder}/final_project/index.js",
+      "cwd": "${workspaceFolder}/final_project",
+      "console": "integratedTerminal",
+      "restart": true,
+      "runtimeArgs": ["--inspect"]
+    },
+    {
+      "name": "Attach to Node (9229)",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "restart": true,
+      "cwd": "${workspaceFolder}/final_project"
+    }
+  ]
+}

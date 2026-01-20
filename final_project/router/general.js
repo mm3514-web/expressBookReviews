@@ -51,15 +51,64 @@ public_users.get('/isbn/:isbn',async function (req, res) {
  });
   
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.get('/author/:author', async function (req, res) {
+  try {
+    const authorName = req.params.author;
+    
+    // 1. Await the books data
+    const allBooks = await new Promise((resolve) => resolve(books));
+    
+    // 2. Filter the keys of the object to find books by that author
+    const keys = Object.keys(allBooks);
+    const filteredBooks = [];
+
+    keys.forEach(key => {
+        if (allBooks[key].author === authorName) {
+            filteredBooks.push(allBooks[key]);
+        }
+    });
+
+    // 3. Check if we found any books
+    if (filteredBooks.length > 0) {
+        return res.status(200).send(JSON.stringify(filteredBooks, null, 4));
+    } else {
+        return res.status(404).json({ message: "No books found by this author" });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching books by author" });
+  }
 });
 
 // Get all books based on title
-public_users.get('/title/:title',function (req, res) {
+public_users.get('/title/:title',async function (req, res) {
   //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+   try {
+    const title = req.params.title;
+    
+    // 1. Await the books data
+    const allBooks = await new Promise((resolve) => resolve(books));
+    
+    // 2. Filter the keys of the object to find books by that author
+    const keys = Object.keys(allBooks);
+    const filteredBooks = [];
+
+    keys.forEach(key => {
+        if (allBooks[key].title === req.params.title) {
+            filteredBooks.push(allBooks[key]);
+        }
+    });
+
+    // 3. Check if we found any books
+    if (filteredBooks.length > 0) {
+        return res.status(200).send(JSON.stringify(filteredBooks, null, 4));
+    } else {
+        return res.status(404).json({ message: "No books found by this title" });
+    }
+
+  } catch (error) {
+    return res.status(500).json({ message: "Error fetching books by title" });
+  }
 });
 
 //  Get book review
