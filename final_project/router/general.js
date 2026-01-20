@@ -5,9 +5,38 @@ let users = require("./auth_users.js").users;
 const public_users = express.Router();
 
 
-public_users.post("/register", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+public_users.post("/register", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    // 1. Basic Validation
+    if (!username || !password) {
+      return res.status(400).json({ message: "Username and password are required" });
+    }
+
+    // 2. Simulate async check (for future database compatibility)
+    const usersList = await new Promise((resolve) => resolve(users));
+
+    // 3. Existence Check (Using .some() is slightly faster than .find() for booleans)
+    const userExists = usersList.some((u) => u.username === username);
+    
+    if (userExists) {
+      return res.status(409).json({ message: "User already exists" });
+    }
+
+    // 4. SECURITY NOTE: In a real app, you would hash the password here
+    // Example: const hashedPassword = await bcrypt.hash(password, 10);
+    
+    users.push({ 
+        username: username, 
+        password: password // In real life, use hashedPassword
+    });
+
+    return res.status(201).json({ message: "User registered successfully" });
+
+  } catch (error) {
+    return res.status(500).json({ message: "Error during registration" });
+  }
 });
 
 // Get the book list available in the shop
