@@ -135,6 +135,32 @@ public_users.get('/author/:author', async function (req, res) {
   }
 });
 
+// TASK 11: Get book details based on ISBN using Async-Await with Axios
+public_users.get('/server/author/:author', async function (req, res) {
+    const author = req.params.author;
+    try {
+        /** * Path B Logic: 
+         * This route acts as a client. It calls the existing public GET /author/:author 
+         * route using Axios. This demonstrates async-await and avoids infinite recursion.
+         */
+        const response = await axios.get(`http://localhost:5000/author/${author}`);
+        
+        // Axios wraps the actual JSON response in the .data property
+        const bookDetails = response.data;
+
+        return res.status(200).json(bookDetails);
+    } catch (error) {
+        // Handle cases where the internal call fails (e.g., 404 or server down)
+        if (error.response && error.response.status === 404) {
+            return res.status(404).json({ message: "author not found via Axios" });
+        }
+        return res.status(500).json({ 
+            message: "Error fetching book details via Axios", 
+            error: error.message 
+        });
+    }
+});
+
 // Get all books based on title
 public_users.get('/title/:title',async function (req, res) {
   //Write your code here
