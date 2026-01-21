@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -40,21 +41,20 @@ public_users.post("/register", async (req, res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/', async function (req, res) {
-  try {
-    // 1. Await the promise to get the books object
-    const allBooks = await new Promise((resolve) => resolve(books));
-    
-    // 2. Use JSON.stringify(object, replacer, space)
-    // null = we don't want to filter any properties
-    // 4 = we want 4 spaces of indentation for "pretty-print"
-    res.status(200).send(JSON.stringify(allBooks, null, 4));
-
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching books" });
-  }
+public_users.get('/', function (req, res) {
+  res.send(JSON.stringify(books, null, 4));
 });
 
+// TASK 10: The Axios "Client" (Call this one to test)
+public_users.get('/server/asynbooks', async function (req, res) {
+    try {
+        // This calls the ROUTE ABOVE, so there is no loop!
+        const response = await axios.get('http://localhost:5000/');
+        res.status(200).json(response.data);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching books", error: error.message });
+    }
+});
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',async function (req, res) {
   //Write your code here
