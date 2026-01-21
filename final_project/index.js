@@ -11,8 +11,26 @@ app.use(express.json());
 
 app.use("/customer",session({secret:process.env.SESSION_SECRET,resave: true, saveUninitialized: true}))
 
-app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+app.use("/customer/auth/*", function auth(req, res, next) {
+    // 1. Check if the session and token exist
+    if (req.session && req.session.authorization) {
+        let token = req.session.authorization['accessToken']; // Accessing the token from session
+
+        // 2. Verify the JWT Token
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => {
+            if (!err) {
+                // 3. If valid, store user info in the request for later use
+                req.user = user;
+                next(); // Move to the next middleware or route handler
+            } else {
+                // 4. If token is expired or invalid
+                return res.status(403).json({ message: "User not authenticated or session expired" });
+            }
+        });
+    } else {
+        // 5. If no token is found at all
+        return res.status(403).json({ message: "User not logged in" });
+    }
 });
  
 const PORT = process.env.PORT;
